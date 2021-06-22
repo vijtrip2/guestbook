@@ -1,0 +1,16 @@
+domain: vijtrip2
+layout:
+- go.kubebuilder.io/v3
+projectName: guestbook
+repo: vijtrip2/guestbook
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: vijtrip2
+  group: webapp
+  kind: Guestbook
+  path: vijtrip2/guestbook/api/v1
+  version: v1
+version: "3"
