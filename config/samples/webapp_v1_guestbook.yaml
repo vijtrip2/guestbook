@@ -3,5 +3,5 @@ kind: Guestbook
 metadata:
   name: guestbook-sample
 spec:
-  # Add fields here
+  updates: oldvalue
   foo: bar

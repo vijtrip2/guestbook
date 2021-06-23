@@ -47,8 +47,26 @@ type GuestbookReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.8.3/pkg/reconcile
 func (r *GuestbookReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	l := log.FromContext(ctx)
-	l.Info("Hello from reconciler")
+	logger := log.FromContext(ctx)
+	logger.Info("Hello from reconciler")
+	var guestbook webappv1.Guestbook
+	if err := r.Get(ctx, req.NamespacedName, &guestbook); err != nil {
+		logger.Error(err, "Guestbook not found")
+	}
+	logger.Info("Guestbook before the update is: ", "guestbook", guestbook)
+	guestbook.Spec.DefaultString = "defaultValue"
+	guestbook.Spec.UpdatedString = "updatedValue"
+	guestbook.Status.Res = "res"
+	logger.Info("Updated guestbook is:", "guestbook", guestbook)
+	r.Update(ctx, &guestbook)
+	logger.Info("Updated the spec")
+	r.Status().Update(ctx, &guestbook)
+	logger.Info("Updated the status")
+
+	if err := r.Get(ctx, req.NamespacedName, &guestbook); err != nil {
+		logger.Error(err, "Guestbook not found after update")
+	}
+	logger.Info("Guestbook after the update is: ", "guestbook", guestbook)
 
 	return ctrl.Result{}, nil
 }
