@@ -53,20 +53,28 @@ func (r *GuestbookReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if err := r.Get(ctx, req.NamespacedName, &guestbook); err != nil {
 		logger.Error(err, "Guestbook not found")
 	}
-	logger.Info("Guestbook before the update is: ", "guestbook", guestbook)
+	logger.Info("Guestbook:", "namespace:", guestbook.Namespace, "name:", guestbook.Name)
+	logger.Info("Guestbook spec before the update is: ", "guestbook-spec", guestbook.Spec)
+	logger.Info("Guestbook status before the update is: ", "guestbook-status", guestbook.Status)
+	logger.Info("Guestbook annotations before the update is: ", "guestbook-annotations", guestbook.Annotations)
 	guestbook.Spec.DefaultString = "defaultValue"
 	guestbook.Spec.UpdatedString = "updatedValue"
 	guestbook.Status.Res = "res"
-	logger.Info("Updated guestbook is:", "guestbook", guestbook)
+	guestbook.Annotations["updatedAnnKey"] = "updatedAnnValue"
+	logger.Info("Updated guestbook spec is:", "guestbook", guestbook.Spec)
+	logger.Info("Updated guestbook status is:", "guestbook", guestbook.Status)
 	r.Update(ctx, &guestbook)
 	logger.Info("Updated the spec")
 	r.Status().Update(ctx, &guestbook)
 	logger.Info("Updated the status")
 
-	if err := r.Get(ctx, req.NamespacedName, &guestbook); err != nil {
+	var updatedGuestbook webappv1.Guestbook
+	if err := r.Get(ctx, req.NamespacedName, &updatedGuestbook); err != nil {
 		logger.Error(err, "Guestbook not found after update")
 	}
-	logger.Info("Guestbook after the update is: ", "guestbook", guestbook)
+	logger.Info("Guestbook spec after the update is: ", "guestbook-spec", updatedGuestbook.Spec)
+	logger.Info("Guestbook status after the update is: ", "guestbook-status", updatedGuestbook.Status)
+	logger.Info("Guestbook annotations after the update is: ", "guestbook-annotations", updatedGuestbook.Annotations)
 
 	return ctrl.Result{}, nil
 }
